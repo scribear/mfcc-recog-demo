@@ -11,11 +11,11 @@ const setSource = async (audioContext: AudioContext) => {
 };
 
 export const ExtractMFCC = (props: { audioRunning: boolean; }) => {
-    let mfcc_num_arr = new Array(13).fill(0);
-    let count = 0;
     const mfccRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        let count = 0;
+
         setSource(new window.AudioContext()).then(source => {
             // create a Meyda analyzer
             const analyzer = Meyda.createMeydaAnalyzer({
@@ -24,9 +24,6 @@ export const ExtractMFCC = (props: { audioRunning: boolean; }) => {
                 bufferSize: 512,
                 featureExtractors: ['mfcc'],
                 callback: (features: { mfcc: number[]; }) => {
-                    for(let i = 0; i < features.mfcc.length; i++){
-                        mfcc_num_arr[i] += features.mfcc[i];
-                    }
                     if (++count >= 60) {
                         mfccRef.current!.innerHTML = features.mfcc.map(n => n.toPrecision(4)).join(", ");
                         count = 0;
